@@ -42,3 +42,27 @@ def ocr(target):
 
 		except Exception as e:
 			print(e)
+
+#画像データ自体を渡してOCRする処理
+def target_to_ocr(img):
+	tool = pyocr.get_available_tools()
+	if len(tool) == 0:
+		print("No OCR")
+		exit(1)
+	try:
+		box = tool[0].image_to_string(img,
+			lang="jpn",
+			builder=pyocr.builders.LineBoxBuilder(tesseract_layout=6)
+			)
+
+		#描画処理用のインスタンスに矩形を描画
+		pos_img = ImageDraw.Draw(img)
+
+		for pos in box:
+			print("w:{}, pos:{}".format(pos.content, pos.position))
+			pos_img.rectangle(pos.position, outline="red", width=3)
+
+		#処理結果を表示(描画オブジェクトで書き込まれるのは元のオブジェクト)
+		img.show()
+	except Exception as e:
+		print(e)

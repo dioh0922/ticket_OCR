@@ -2,6 +2,7 @@ import sys
 import io
 
 import ocr_module
+import img_module
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, "UTF-8")
 
@@ -12,4 +13,6 @@ if 2 > len(args):
 	print("引数が少なすぎます")
 	exit(1)
 
-ocr_module.ocr(args[1])
+#ocr_module.ocr(args[1])
+#img_module.img_to_gray(args[1])
+img_module.ticket_threshold(args[1])
