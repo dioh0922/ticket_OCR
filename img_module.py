@@ -47,7 +47,7 @@ def ticket_threshold(target):
 
 	rem_noise_img = pre_img
 
-	rem_noise_img = rem_noise_img.crop((0, 0, gray_img.width, int(gray_img.height / 2) ))
+	rem_noise_img = img_cut_half_up(rem_noise_img)
 	rem_noise_img.show()
 	rem_noise_img = rem_noise_img.convert("RGB")
 
@@ -84,6 +84,9 @@ def ticket_threshold(target):
 def area_img_to_ocr(target, position):
 	img = Image.open(target)
 	gray_img = img.convert("L")
+	gray_img = gray_img.resize( (int(gray_img.width / 2), int(gray_img.height / 2) ) )
+	gray_img = img_cut_half_up(gray_img)
+	
 	cut_img = gray_img.crop(position)
 	cut_img.show()
 
@@ -108,3 +111,7 @@ def title_area_ocr_wrapper(img):
 
 	for iter in pos:
 		print(iter.content)
+
+#画像の上半分を切り出す関数
+def img_cut_half_up(img):
+	return img.crop((0, 0, img.width, int(img.height / 2) ))
