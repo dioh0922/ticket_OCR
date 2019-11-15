@@ -36,23 +36,26 @@ def ticket_threshold(target):
 
 	#ラムダ式で2値化 画像は0(黒)～255(白)
 	#黒が濃い(文字の印字)部分を残し、それ以外を白く飛ばす
-	th = gray_img.point(lambda x: 0 if x < 93 else 255)
+	bin_img = gray_img.point(lambda x: 0 if x < 93 else 255)
 
-	op = img_opening(th, 5)
+	pre_img = bin_img
 
-	cl = img_closing(th, 1)
+	#pre_img = img_opening(pre_img, 1)
 
-	th = cl
+	#pre_img = img_closing(pre_img, 1)
 
-	th = th.crop((0, 0, gray_img.width, int(gray_img.height / 2) ))
 
-	th = th.convert("RGB")
+	rem_noise_img = pre_img
 
-	pos = ocr_module.target_to_ocr(th)
+	rem_noise_img = rem_noise_img.crop((0, 0, gray_img.width, int(gray_img.height / 2) ))
+	rem_noise_img.show()
+	rem_noise_img = rem_noise_img.convert("RGB")
+
+	pos = ocr_module.target_to_ocr(rem_noise_img)
 
 	#ブラウザに一旦、切り出した画像を返す → タイトル領域を選ばせる
 
-	img_arr = []
+	area_point_arr = []
 	cnt = 0;
 
 	for iter in pos:
@@ -62,31 +65,46 @@ def ticket_threshold(target):
 			y_st = iter.position[0][1]
 			x_en = iter.position[1][0]
 			y_en = iter.position[1][1]
-			im_cut = th.crop((x_st, y_st, x_en, y_en))
+			im_cut = rem_noise_img.crop((x_st, y_st, x_en, y_en))
 			print(cnt, ":" ,iter.content)
-			#im_cut.show()
+
 			cnt = cnt + 1
-			img_arr.append(im_cut)
+			#img_arr.append(im_cut)
+			area_point_arr.append([x_st, y_st, x_en, y_en])
+
+	if len(area_point_arr) < 1:
+		print("抽出できません")
+		exit()
 
 	print("どの画像を表示するか?")
 	i = input()
-	img_arr[int(i)].show()
-	"""
-	x_st = pos[3].position[0][0]
-	y_st = pos[3].position[0][1]
-	x_en = pos[3].position[1][0]
-	y_en = pos[3].position[1][1]
+	return area_point_arr[int(i)]
 
-	print(pos[3].position[0][0])
-	print(pos[3].content)
-
-
-	x_st = gray_img.width / 20
-	y_st = gray_img.height / 20
-	x_en = gray_img.width - x_st
-	y_en = gray_img.height - y_st
-
-	im_cut = th.crop((x_st, y_st, x_en, y_en))
-	#im_cut.show()
+#取得した領域に対してOCRする処理
+def area_img_to_ocr(target, position):
+	img = Image.open(target)
+	gray_img = img.convert("L")
+	cut_img = gray_img.crop(position)
+	cut_img.show()
 
 	"""
+	title_area_ocr_wrapper(img)
+
+	pre_img = img.resize( (img.width + 10, img.height + 10) )
+
+	title_area_ocr_wrapper(pre_img)
+
+	"""
+	#pre_img = img_closing(pre_img, 1)
+	#title_area_ocr_wrapper(pre_img)
+
+#タイトル領域に対してOCRして結果を取得する処理 (debug用)
+def title_area_ocr_wrapper(img):
+	pos = ocr_module.target_to_ocr(img)
+
+	if len(pos) < 1:
+		print("抽出できません")
+		exit()
+
+	for iter in pos:
+		print(iter.content)
