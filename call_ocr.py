@@ -13,6 +13,12 @@ if 2 > len(args):
 	print("引数が少なすぎます")
 	exit(1)
 
+if 3 <= len(args):
+	if args[2] == "-a":
+		img_module.test_trained_model(args[1])
+	else:
+		print("error debug option")
+	exit()
 #ocr_module.ocr(args[1])
 #img_module.img_to_gray(args[1])
 

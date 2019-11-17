@@ -18,11 +18,13 @@ def img_closing(img, n):
 		img_cl = img_cl.filter(ImageFilter.MinFilter())
 	return img_cl
 
+#グレースケールを表示する処理
 def img_to_gray(target):
 	img = Image.open(target)
 	gray_img = img.convert("L")
 	gray_img.show()
 
+#画像のヒストグラムを表示する処理
 def show_img_histogram(img):
 	plt.plot(img.histogram())
 	plt.show()
@@ -48,7 +50,7 @@ def ticket_threshold(target):
 	rem_noise_img = pre_img
 
 	rem_noise_img = img_cut_half_up(rem_noise_img)
-	rem_noise_img.show()
+
 	rem_noise_img = rem_noise_img.convert("RGB")
 
 	pos = ocr_module.target_to_ocr(rem_noise_img)
@@ -86,20 +88,22 @@ def area_img_to_ocr(target, position):
 	gray_img = img.convert("L")
 	gray_img = gray_img.resize( (int(gray_img.width / 2), int(gray_img.height / 2) ) )
 	gray_img = img_cut_half_up(gray_img)
-	
+
 	cut_img = gray_img.crop(position)
-	cut_img.show()
+
+	bin_img = cut_img.point(lambda x: 0 if x < 130 else 255)
+
+	bin_img = img_closing(bin_img, 0)
+	#bin_img.show()
 
 	"""
-	title_area_ocr_wrapper(img)
+	title_area_ocr_wrapper(bin_img)
 
-	pre_img = img.resize( (img.width + 10, img.height + 10) )
+	pre_img = bin_img.resize( (bin_img.width + 200, bin_img.height) )
+	pre_img.show()
 
 	title_area_ocr_wrapper(pre_img)
-
 	"""
-	#pre_img = img_closing(pre_img, 1)
-	#title_area_ocr_wrapper(pre_img)
 
 #タイトル領域に対してOCRして結果を取得する処理 (debug用)
 def title_area_ocr_wrapper(img):
@@ -115,3 +119,9 @@ def title_area_ocr_wrapper(img):
 #画像の上半分を切り出す関数
 def img_cut_half_up(img):
 	return img.crop((0, 0, img.width, int(img.height / 2) ))
+
+#数種類のモデルで識別する処理(debug用)
+def test_trained_model(target):
+	img = Image.open(target)
+	gray_img = img.convert("L")
+	ocr_module.test_trained_ocr(gray_img)

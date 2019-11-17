@@ -48,3 +48,29 @@ def ocr_draw_rectangle(img):
 
 	except Exception as e:
 		print(e)
+
+#識別する言語を指定して画像にOCRする処理(debug用)
+def ocr_to_target_lang(img, language):
+	tool = pyocr.get_available_tools()
+	if len(tool) == 0:
+		print("No OCR")
+		exit(1)
+	try:
+		box = tool[0].image_to_string(img,
+			lang=language,
+			builder=pyocr.builders.LineBoxBuilder(tesseract_layout=6)
+			)
+
+		for txt in box:
+			print("文字列:",txt.content)
+
+	except Exception as e:
+		print(e)
+
+#訓練した教師データでテストする処理
+def test_trained_ocr(img):
+	ocr_to_target_lang(img, "jpn")
+	ocr_to_target_lang(img, "jpn00")
+	ocr_to_target_lang(img, "jpn01")
+	ocr_to_target_lang(img, "jpn02")
+	ocr_to_target_lang(img, "jpn03")
