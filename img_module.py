@@ -163,7 +163,7 @@ def img_proc_filter(target):
 	img = Image.open(target)
 	gray_img = img.convert("L")
 
-	#gray_img = gray_img.resize( (int(gray_img.width * 1.5), int(gray_img.height * 1.5) ) )
+	gray_img = gray_img.resize( (int(gray_img.width * 1.5), int(gray_img.height * 1.5) ) )
 
 	#gray_img = gray_img.filter(ImageFilter.MedianFilter())
 
@@ -176,7 +176,7 @@ def img_proc_filter(target):
 	漢字はぼかすと精度が落ちる
 	"""
 
-	#gray_img = gray_img.filter(ImageFilter.GaussianBlur(1.0))
+	gray_img = gray_img.filter(ImageFilter.GaussianBlur(0.8))
 
 	result = gray_img
 	return result

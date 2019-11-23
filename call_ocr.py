@@ -3,6 +3,7 @@ import io
 
 import ocr_module
 import img_module
+import txt_module
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, "UTF-8")
 
@@ -34,6 +35,9 @@ if 3 <= len(args):
 
 	elif args[2] == "-s":
 		img_module.test_default_model(args[1])
+
+	elif args[2] == "-w":
+		print(txt_module.txt_dakuten_marge("カ”－ルスﾞ") )
 
 	else:
 		print("error debug option")

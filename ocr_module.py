@@ -75,10 +75,10 @@ def test_trained_ocr(img):
 	ocr_to_target_lang(img, "jpn01")
 
 	print("jpn06")
-	ocr_to_target_lang(img, "jpn06")
+	ocr_to_target_lang(img, "jpn16")
 
 	print("jpn13")
-	ocr_to_target_lang(img, "jpn13")
+	ocr_to_target_lang(img, "jpn17")
 
 #サンプルのモデルでOCRする
 def test_default_model_ocr(img):
