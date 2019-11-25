@@ -3,7 +3,6 @@ from PIL import ImageDraw
 import pyocr
 import pyocr.builders
 import os
-import jaconv
 
 #画像データ自体を渡してOCRする
 def target_to_ocr(img):
@@ -63,7 +62,6 @@ def ocr_to_target_lang(img, language):
 			)
 
 		for txt in box:
-			rem_hankaku = jaconv.h2z(txt.content, digit=True, ascii=True)
 			print("文字列:",txt.content)
 
 	except Exception as e:
@@ -71,16 +69,24 @@ def ocr_to_target_lang(img, language):
 
 #訓練した教師データでテストする処理
 def test_trained_ocr(img):
-	print("jpn01")
-	ocr_to_target_lang(img, "jpn01")
+	#print("jpn01")
+	#ocr_to_target_lang(img, "jpn01")
 
-	print("jpn06")
-	ocr_to_target_lang(img, "jpn16")
+	train = "jpn20"
 
-	print("jpn13")
-	ocr_to_target_lang(img, "jpn17")
+	print(train)
+	ocr_to_target_lang(img, train)
 
-#サンプルのモデルでOCRする
+	train = "jpn19"
+
+	print(train)
+	ocr_to_target_lang(img, train)
+
+#サンプルのモデルでOCRするラッパー
 def test_default_model_ocr(img):
-	print("jpnの時")
-	ocr_to_target_lang(img, "jpn")
+	test_target_ocr(img, "jpn")
+
+#指定した言語モデルでOCRする処理
+def test_target_ocr(img, target):
+	print(target)
+	ocr_to_target_lang(img, target)
