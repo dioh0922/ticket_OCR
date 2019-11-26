@@ -47,14 +47,9 @@ for cnt in range(0, len(daku_list), 2):
 random.shuffle(dakuten_idx)
 idx = dakuten_idx[0]
 
-"""
-train_list => 映画タイトル
-daku_list => 半角濁点
-dakuten_idx => 半角の要素を指す(乱数)
-ins_arr => train_listのどこに半角入れるか(インデックスを乱数で持つ)
-"""
-
-arr = np.random.randint(0, len(train_list) - 1, (1, 50))
+#半角濁音は文章に混ぜるため配列の前から90%の位置までの範囲に入れるように乱数を発生させる
+offset = int(len(train_list) / 10)
+arr = np.random.randint(0, len(train_list) - offset, (1, 50))
 
 ins_arr = np.sort(arr)
 
@@ -62,28 +57,37 @@ ins_iter = 0
 daku_iter = 0
 out_str = ""
 
+"""
+train_list => 映画タイトル
+daku_list => 半角濁点
+dakuten_idx => 半角の要素を指す(乱数)
+ins_arr => train_listのどこに半角入れるか(インデックスを乱数で持つ)
+"""
+
+
 #乱数で設定したtrain_listの位置に半角濁音を入れる
 for i in range(len(train_list)):
 	out_str += train_list[i]
 	if i == int(ins_arr[0][ins_iter]):
-		print(i, ":", int(ins_arr[0][ins_iter]))
+		#print(i, ":", int(ins_arr[0][ins_iter]))
 		ins_iter += 1
 
 		#先頭に戻すが以降はtrain_listと一致しないので参照しない
 		if ins_iter == 50:
 			ins_iter = 0
 
-		if daku_iter < len(dakuten_idx):
-			idx = dakuten_idx[daku_iter]
+		#daku_iterで2ずつだが、dakuten_idxは1ずつのため飛ばして入れてしまう
+		#daku_listの長さでやると配列外に行く
+		if daku_iter < len(daku_list):
+			idx = dakuten_idx[int(daku_iter / 2)]
 			out_str += daku_list[idx]
 			out_str += daku_list[idx + 1]
+			print(daku_list[idx], daku_list[idx + 1])
 			daku_iter += 2
-			print(daku_iter)
 
-	if i % 20 == 0:
+	if (i + 1) % 30 == 0:
 		out_str += "\n"
 
 file = open("test_train.txt", "w", encoding = "utf-8")
 file.write(out_str)
 file.close()
-#print(len(iter_list))
