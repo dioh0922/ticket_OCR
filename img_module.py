@@ -182,7 +182,7 @@ def img_proc_filter(target):
 	#gray_img = img_closing(gray_img, 1)
 	#gray_img = img_opening(gray_img, 1)
 
-	gray_img = gray_img.filter(ImageFilter.GaussianBlur(1))
+	gray_img = gray_img.filter(ImageFilter.GaussianBlur(0.8))
 
 	result = gray_img
 	return result

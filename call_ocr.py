@@ -12,7 +12,11 @@ args = sys.argv
 #引数チェック ファイル名を指定する
 if 2 > len(args):
 	print("引数が少なすぎます")
-	exit(1)
+	exit()
+elif args[1] == "-create":
+	txt_module.create_train_txt()
+	print("訓練用のテキストを作成しました")
+	exit()
 
 if 3 <= len(args):
 	if args[2] == "-t":
@@ -21,11 +25,6 @@ if 3 <= len(args):
 	elif args[2] == "-c":
 		detected_area = img_module.ticket_threshold(args[1])
 		img_module.cut_title_area(args[1], detected_area)
-
-	elif args[2] == "-h":
-		print("-t: 訓練モデル全てでタイトル画像にOCR")
-		print("-c: タイトル領域を切り出す(直下にtmp.jpg)")
-		print("-d: 2値画像を表示する")
 
 	elif args[2] == "-d":
 		img_filter = img_module.img_proc_filter(args[1])
@@ -38,6 +37,14 @@ if 3 <= len(args):
 
 	elif args[2] == "-w":
 		print(txt_module.txt_dakuten_marge("カ”－ルスﾞ") )
+
+	elif args[2] == "-h":
+		print("-create: 訓練用のテキストうぃ作成する")
+		print("-t: 訓練モデル全てでタイトル画像にOCR")
+		print("-c: タイトル領域を切り出す(直下にtmp.jpg)")
+		print("-d: 2値画像を表示する")
+		print("-s: 元のモデルでOCRする")
+		print("-w: 濁点補正のデバッグ")
 
 	else:
 		print("error debug option")

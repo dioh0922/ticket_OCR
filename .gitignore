@@ -3,3 +3,5 @@
 *.pyc
 *.docx
 test.bat
+test_train_once.txt
+test_train.txt
