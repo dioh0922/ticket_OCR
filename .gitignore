@@ -5,3 +5,5 @@
 test.bat
 test_train_once.txt
 test_train.txt
+test_train_1.txt
+*.txt

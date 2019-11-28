@@ -72,12 +72,12 @@ def test_trained_ocr(img):
 	#print("jpn01")
 	#ocr_to_target_lang(img, "jpn01")
 
-	train = "jpn23"
+	train = "jpn25"
 
 	print(train)
 	ocr_to_target_lang(img, train)
 
-	train = "jpn24"
+	train = "jpn26"
 
 	print(train)
 	ocr_to_target_lang(img, train)

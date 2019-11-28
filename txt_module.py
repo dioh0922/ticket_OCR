@@ -20,6 +20,13 @@ def dakuon_exchange(word):
 		result = word
 	return result
 
+def add_to_resultflie(txt):
+	file = open("test_train.txt", "a", encoding = "utf-8")
+	file.write(txt)
+	file.write("\n")
+	file.close()
+
+#ランダムに並べ替えて訓練用の文字列に変換する処理
 def create_shuffle_txt(title_list, kana_list, kana_idx):
 	random.shuffle(kana_idx)
 	idx = kana_idx[0]
@@ -53,20 +60,29 @@ def create_shuffle_txt(title_list, kana_list, kana_idx):
 		if (i + 1) % 30 == 0:
 			out_str += "\n"
 
-	file = open("test_train.txt", "a", encoding = "utf-8")
-	file.write(out_str)
-	file.write("\n")
-	file.close()
+	add_to_resultflie(out_str)
 
+#元のファイルをそのまま追記する
+def add_row_order(txt):
+	result = ""
+	for i in range(len(txt)):
+		result += txt[i]
+		if (i + 1) % 30 == 0:
+			result += "\n"
+	return result
 
 def create_train_txt():
 	"""
-	1.サンプルの文章を読み取り、単語ごとに乱数で順番を入れ替える(改行は取る)
+	1.サンプルの文章を読み取り、文字ごとに乱数で順番を入れ替える(改行は取る)
 	2.半角濁点用のファイルを読み取り、改行を取る
 	3.半角濁点の要素を指すインデックスの配列を作り
 	  乱数で入れ替える(2文字で1つのため増分2で参照していく)
 	4.文章配列の長さの範囲で乱数の配列を生成する(該当位置に半角濁点を差し込む)
 	5.文章配列を参照しながら半角濁点を差し込み、ファイル出力する(一定間隔で改行する)
+	"""
+
+	"""
+	※完全ランダムだと識別率は上がりにくい(半角カナ系)
 	"""
 
 	title_list = []	#半角カナのため濁音は2文字
@@ -85,6 +101,8 @@ def create_train_txt():
 	for i in read_list:
 		title_list += i.rstrip("\n")
 
+	row_order = add_row_order(title_list)
+
 	random.shuffle(title_list)
 
 	file = open("./train_txt/train_dakuon.txt", "r", encoding = "utf-8")
@@ -100,3 +118,5 @@ def create_train_txt():
 		kana_idx.append((cnt))
 
 	create_shuffle_txt(title_list, kana_list, kana_idx)
+
+	add_to_resultflie(row_order)
