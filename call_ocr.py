@@ -17,6 +17,18 @@ elif args[1] == "-create":
 	txt_module.create_train_txt()
 	print("訓練用のテキストを作成しました")
 	exit()
+elif args[1] == "-kana":
+	txt_module.add_kana_reinforce()
+	print("半角カナの追記をしました")
+	exit()
+elif args[1] == "-row":
+	txt_module.add_row_teachdata()
+	print("順番を入れ替えずに訓練用のテキストを作成しました")
+	exit()
+
+elif args[1] == "-h":
+	print("-create: 訓練用のテキストを作成する")
+	print("-kana: 半角カナ(1文字)をスペース区切りで追記する")
 
 if 3 <= len(args):
 	if args[2] == "-t":
@@ -39,7 +51,6 @@ if 3 <= len(args):
 		print(txt_module.txt_dakuten_marge("カ”－ルスﾞ") )
 
 	elif args[2] == "-h":
-		print("-create: 訓練用のテキストうぃ作成する")
 		print("-t: 訓練モデル全てでタイトル画像にOCR")
 		print("-c: タイトル領域を切り出す(直下にtmp.jpg)")
 		print("-d: 2値画像を表示する")

@@ -20,11 +20,14 @@ def dakuon_exchange(word):
 		result = word
 	return result
 
+#与えた文字列を結果ファイルに追記する処理
 def add_to_resultflie(txt):
 	file = open("test_train.txt", "a", encoding = "utf-8")
 	file.write(txt)
 	file.write("\n")
 	file.close()
+
+	return 0
 
 #ランダムに並べ替えて訓練用の文字列に変換する処理
 def create_shuffle_txt(title_list, kana_list, kana_idx):
@@ -62,6 +65,8 @@ def create_shuffle_txt(title_list, kana_list, kana_idx):
 
 	add_to_resultflie(out_str)
 
+	return 0
+
 #元のファイルをそのまま追記する
 def add_row_order(txt):
 	result = ""
@@ -71,6 +76,26 @@ def add_row_order(txt):
 			result += "\n"
 	return result
 
+def get_train_data():
+	result_list = []
+
+	file = open("./train_txt/train_movie.txt", "r", encoding="utf-8")
+	read_list = file.read()
+	file.close()
+
+	for i in read_list:
+		result_list += i.rstrip("\n")
+
+	file = open("./train_txt/train_kana.txt", "r", encoding = "utf-8")
+	read_list = file.read()
+	file.close()
+
+	for i in read_list:
+		result_list += i.rstrip("\n")
+
+	return result_list
+
+#訓練用のテキストを生成し出力する処理
 def create_train_txt():
 	"""
 	1.サンプルの文章を読み取り、文字ごとに乱数で順番を入れ替える(改行は取る)
@@ -81,28 +106,8 @@ def create_train_txt():
 	5.文章配列を参照しながら半角濁点を差し込み、ファイル出力する(一定間隔で改行する)
 	"""
 
-	"""
-	※完全ランダムだと識別率は上がりにくい(半角カナ系)
-	"""
-
 	title_list = []	#半角カナのため濁音は2文字
-
-	file = open("./train_txt/train_movie.txt", "r", encoding="utf-8")
-	read_list = file.read()
-	file.close()
-
-	for i in read_list:
-		title_list += i.rstrip("\n")
-
-	file = open("./train_txt/train_kana.txt", "r", encoding = "utf-8")
-	read_list = file.read()
-	file.close()
-
-	for i in read_list:
-		title_list += i.rstrip("\n")
-
-	row_order = add_row_order(title_list)
-
+	title_list = get_train_data()
 	random.shuffle(title_list)
 
 	file = open("./train_txt/train_dakuon.txt", "r", encoding = "utf-8")
@@ -119,4 +124,51 @@ def create_train_txt():
 
 	create_shuffle_txt(title_list, kana_list, kana_idx)
 
+	return 0
+
+def add_row_teachdata():
+	title_list = []
+
+	title_list = get_train_data()
+
+	row_order = add_row_order(title_list)
+
 	add_to_resultflie(row_order)
+
+	return 0
+
+#半角カナを追加で半角スペース区切りと1文字改行で追加する
+def add_kana_reinforce():
+	kana_list = []
+	kana_str = ""
+
+	file = open("./train_txt/train_kana.txt", "r", encoding = "utf-8")
+	read_list = file.read()
+	file.close()
+
+	for i in read_list:
+		kana_list += i.rstrip("\n")
+
+	#1文字ずつスペースで区切る
+	for i in range(len(kana_list)):
+		kana_str += kana_list[i]
+		kana_str += " "
+		if (i + 1) % 30 == 0:
+			kana_str += "\n"
+
+	kana_str += "\n"
+
+	#1文字ずつ改行する
+	for i in range(len(kana_list)):
+		kana_str += kana_list[i]
+		kana_str += "\n"
+
+
+	add_to_resultflie(kana_str)
+
+	return 0
+
+#半角カナの濁音を追加する処理
+def add_kana_daku_reinforce():
+	
+	return 0
