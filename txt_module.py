@@ -67,7 +67,7 @@ def create_shuffle_txt(title_list, kana_list, kana_idx):
 
 	return 0
 
-#元のファイルをそのまま追記する
+#元のファイルをそのまま追記する文字列を生成する
 def add_row_order(txt):
 	result = ""
 	for i in range(len(txt)):
@@ -76,6 +76,7 @@ def add_row_order(txt):
 			result += "\n"
 	return result
 
+#訓練用のテキストを取得する処理
 def get_train_data():
 	result_list = []
 
@@ -90,6 +91,18 @@ def get_train_data():
 	read_list = file.read()
 	file.close()
 
+	for i in read_list:
+		result_list += i.rstrip("\n")
+
+	return result_list
+
+#半角カナ濁音のテキストを取得する処理
+def get_dakuon_data():
+	file = open("./train_txt/train_dakuon.txt", "r", encoding = "utf-8")
+	read_list = file.read()
+	file.close()
+
+	result_list = []
 	for i in read_list:
 		result_list += i.rstrip("\n")
 
@@ -110,13 +123,8 @@ def create_train_txt():
 	title_list = get_train_data()
 	random.shuffle(title_list)
 
-	file = open("./train_txt/train_dakuon.txt", "r", encoding = "utf-8")
-	read_list = file.read()
-	file.close()
-
 	kana_list = []
-	for i in read_list:
-		kana_list += i.rstrip("\n")
+	kana_list = get_dakuon_data()
 
 	kana_idx = []
 	for cnt in range(0, len(kana_list), 2):
@@ -163,12 +171,39 @@ def add_kana_reinforce():
 		kana_str += kana_list[i]
 		kana_str += "\n"
 
-
 	add_to_resultflie(kana_str)
 
 	return 0
 
 #半角カナの濁音を追加する処理
 def add_kana_daku_reinforce():
-	
+	add_str = ""
+	kana_list = []
+	kana_idx = []
+
+	kana_list = get_dakuon_data()
+
+	for i in range(0, len(kana_list), 2):
+		kana_idx.append((i))
+		add_str += kana_list[i]
+		add_str += kana_list[i + 1]
+		if (i + 2) % 30 == 0:
+			add_str += "\n"
+
+	add_str += "\n"
+
+	for i in range(0, len(kana_list), 2):
+		add_str += kana_list[i]
+		add_str += kana_list[i + 1]
+		add_str += " "
+		if (i + 2) % 30 == 0:
+			add_str += "\n"
+
+	for i in range(0, len(kana_list), 2):
+		add_str += kana_list[i]
+		add_str += kana_list[i + 1]
+		add_str += "\n"
+
+	add_to_resultflie(add_str)
+
 	return 0

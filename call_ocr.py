@@ -21,6 +21,10 @@ elif args[1] == "-kana":
 	txt_module.add_kana_reinforce()
 	print("半角カナの追記をしました")
 	exit()
+elif args[1] == "-daku":
+	txt_module.add_kana_daku_reinforce()
+	print("半角カナ濁音の追記をしました")
+	exit()
 elif args[1] == "-row":
 	txt_module.add_row_teachdata()
 	print("順番を入れ替えずに訓練用のテキストを作成しました")
@@ -28,7 +32,10 @@ elif args[1] == "-row":
 
 elif args[1] == "-h":
 	print("-create: 訓練用のテキストを作成する")
-	print("-kana: 半角カナ(1文字)をスペース区切りで追記する")
+	print("-kana: 半角カナ(1文字)を追加で訓練データにする")
+	print("-row: タイトルなどのデータを入れ替えずに訓練データにする")
+	print("-daku: 半角カナ濁音を追加で訓練データにする")
+	exit()
 
 if 3 <= len(args):
 	if args[2] == "-t":
