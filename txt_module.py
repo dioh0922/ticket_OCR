@@ -56,7 +56,6 @@ def create_shuffle_txt(title_list, kana_list):
 				ins_iter = 0
 
 			if idx < len(kana_list):
-				print(jaconv.z2h(kana_list[idx], kana = True))
 				out_str += jaconv.z2h(kana_list[idx], kana = True)
 				idx += 1
 
@@ -67,11 +66,11 @@ def create_shuffle_txt(title_list, kana_list):
 
 	return 0
 
-#元のファイルをそのまま追記する文字列を生成する
-def add_row_order(txt):
+#渡した配列を文字列にする処理
+def transform_list_to_str(list):
 	result = ""
-	for i in range(len(txt)):
-		result += txt[i]
+	for i in range(len(list)):
+		result += list[i]
 		if (i + 1) % 30 == 0:
 			result += "\n"
 	return result
@@ -131,12 +130,6 @@ def create_train_txt():
 	kana_list = get_dakuon_data()
 	random.shuffle(kana_list)
 
-	"""
-	kana_idx = []
-	for cnt in range(0, len(kana_list), 2):
-		kana_idx.append((cnt))
-	"""
-
 	create_shuffle_txt(title_list, kana_list)
 
 	return 0
@@ -144,9 +137,9 @@ def create_train_txt():
 def add_row_teachdata():
 	title_list = []
 
-	title_list = get_train_data()
+	title_list = get_train_title_data()
 
-	row_order = add_row_order(title_list)
+	row_order = transform_list_to_str(title_list)
 
 	add_to_resultflie(row_order)
 
@@ -186,29 +179,24 @@ def add_kana_reinforce():
 def add_kana_daku_reinforce():
 	add_str = ""
 	kana_list = []
-	kana_idx = []
 
 	kana_list = get_dakuon_data()
 
-	for i in range(0, len(kana_list), 2):
-		kana_idx.append((i))
-		add_str += kana_list[i]
-		add_str += kana_list[i + 1]
-		if (i + 2) % 30 == 0:
+	for i in range(len(kana_list)):
+		add_str += jaconv.z2h(kana_list[i], kana = True)
+		if (i + 1) % 15 == 0:
 			add_str += "\n"
 
 	add_str += "\n"
 
-	for i in range(0, len(kana_list), 2):
-		add_str += kana_list[i]
-		add_str += kana_list[i + 1]
+	for i in range(len(kana_list)):
+		add_str += jaconv.z2h(kana_list[i], kana = True)
 		add_str += " "
-		if (i + 2) % 30 == 0:
+		if (i + 1) % 15 == 0:
 			add_str += "\n"
 
-	for i in range(0, len(kana_list), 2):
-		add_str += kana_list[i]
-		add_str += kana_list[i + 1]
+	for i in range(len(kana_list)):
+		add_str += jaconv.z2h(kana_list[i], kana = True)
 		add_str += "\n"
 
 	add_to_resultflie(add_str)
@@ -219,13 +207,15 @@ def add_kana_daku_reinforce():
 def add_trans_hankaku():
 	title_list = []
 	title_list = get_train_title_data()
-	add_str = ""
-	for i in range(len(title_list)):
-		add_str += title_list[i]
-		if (i + 1) % 30 == 0:
-			add_str += "\n"
+	shuffle_list = 	title_list
+	random.shuffle(shuffle_list)
 
-	add_str = jaconv.z2h(add_str, kana = True, digit = True)
-	add_to_resultflie(add_str)
+	add_str = transform_list_to_str(title_list)
+	save_str = jaconv.z2h(add_str, kana = True, digit = True)
+	add_to_resultflie(save_str)
+
+	add_str = transform_list_to_str(shuffle_list)
+	save_str = jaconv.z2h(add_str, kana = True, digit = True)
+	add_to_resultflie(save_str)
 
 	return 0

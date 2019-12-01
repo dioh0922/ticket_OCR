@@ -31,6 +31,7 @@ elif args[1] == "-row":
 	exit()
 elif args[1] == "-trans":
 	txt_module.add_trans_hankaku()
+	print("元のタイトルを半角に変換して追記しました")
 	exit()
 
 elif args[1] == "-h":
