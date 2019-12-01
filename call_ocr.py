@@ -29,12 +29,16 @@ elif args[1] == "-row":
 	txt_module.add_row_teachdata()
 	print("順番を入れ替えずに訓練用のテキストを作成しました")
 	exit()
+elif args[1] == "-trans":
+	txt_module.add_trans_hankaku()
+	exit()
 
 elif args[1] == "-h":
 	print("-create: 訓練用のテキストを作成する")
 	print("-kana: 半角カナ(1文字)を追加で訓練データにする")
 	print("-row: タイトルなどのデータを入れ替えずに訓練データにする")
 	print("-daku: 半角カナ濁音を追加で訓練データにする")
+	print("-trans: タイトルの文字列を半角に変換して記録する")
 	exit()
 
 if 3 <= len(args):

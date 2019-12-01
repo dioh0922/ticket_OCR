@@ -4,7 +4,7 @@ import numpy as np
 import jaconv
 import txt_module
 
-
+"""
 #文字列中の濁点、半濁点を1文字に統合する処理
 def txt_dakuten_marge(txt):
 	tmp_txt = txt
@@ -19,6 +19,7 @@ def dakuon_exchange(word):
 	else:
 		result = word
 	return result
+"""
 
 #与えた文字列を結果ファイルに追記する処理
 def add_to_resultflie(txt):
@@ -30,9 +31,7 @@ def add_to_resultflie(txt):
 	return 0
 
 #ランダムに並べ替えて訓練用の文字列に変換する処理
-def create_shuffle_txt(title_list, kana_list, kana_idx):
-	random.shuffle(kana_idx)
-	idx = kana_idx[0]
+def create_shuffle_txt(title_list, kana_list):
 
 	#半角濁音は文章に混ぜるため配列の前から90%の位置までの範囲に入れるように乱数を発生させる
 	offset = int(len(title_list) / 10)
@@ -44,6 +43,8 @@ def create_shuffle_txt(title_list, kana_list, kana_idx):
 	daku_iter = 0
 	out_str = ""
 
+	idx = 0
+
 	#乱数で設定したtrain_listの位置に半角濁音を入れる
 	for i in range(len(title_list)):
 		out_str += title_list[i]
@@ -54,11 +55,10 @@ def create_shuffle_txt(title_list, kana_list, kana_idx):
 			if ins_iter == 50:
 				ins_iter = 0
 
-			if daku_iter < len(kana_list):
-				idx = kana_idx[int(daku_iter / 2)]
-				out_str += kana_list[idx]
-				out_str += kana_list[idx + 1]
-				daku_iter += 2
+			if idx < len(kana_list):
+				print(jaconv.z2h(kana_list[idx], kana = True))
+				out_str += jaconv.z2h(kana_list[idx], kana = True)
+				idx += 1
 
 		if (i + 1) % 30 == 0:
 			out_str += "\n"
@@ -77,9 +77,8 @@ def add_row_order(txt):
 	return result
 
 #訓練用のテキストを取得する処理
-def get_train_data():
+def get_train_title_data():
 	result_list = []
-
 	file = open("./train_txt/train_movie.txt", "r", encoding="utf-8")
 	read_list = file.read()
 	file.close()
@@ -87,6 +86,10 @@ def get_train_data():
 	for i in read_list:
 		result_list += i.rstrip("\n")
 
+	return result_list
+
+def get_train_kana_data():
+	result_list = []
 	file = open("./train_txt/train_kana.txt", "r", encoding = "utf-8")
 	read_list = file.read()
 	file.close()
@@ -98,7 +101,7 @@ def get_train_data():
 
 #半角カナ濁音のテキストを取得する処理
 def get_dakuon_data():
-	file = open("./train_txt/train_dakuon.txt", "r", encoding = "utf-8")
+	file = open("./train_txt/train_dakuon_zen.txt", "r", encoding = "utf-8")
 	read_list = file.read()
 	file.close()
 
@@ -120,17 +123,21 @@ def create_train_txt():
 	"""
 
 	title_list = []	#半角カナのため濁音は2文字
-	title_list = get_train_data()
+	title_list = get_train_title_data()
+	title_list += get_train_kana_data()
 	random.shuffle(title_list)
 
 	kana_list = []
 	kana_list = get_dakuon_data()
+	random.shuffle(kana_list)
 
+	"""
 	kana_idx = []
 	for cnt in range(0, len(kana_list), 2):
 		kana_idx.append((cnt))
+	"""
 
-	create_shuffle_txt(title_list, kana_list, kana_idx)
+	create_shuffle_txt(title_list, kana_list)
 
 	return 0
 
@@ -204,6 +211,21 @@ def add_kana_daku_reinforce():
 		add_str += kana_list[i + 1]
 		add_str += "\n"
 
+	add_to_resultflie(add_str)
+
+	return 0
+
+#元のタイトルを半角に変換して追記する処理
+def add_trans_hankaku():
+	title_list = []
+	title_list = get_train_title_data()
+	add_str = ""
+	for i in range(len(title_list)):
+		add_str += title_list[i]
+		if (i + 1) % 30 == 0:
+			add_str += "\n"
+
+	add_str = jaconv.z2h(add_str, kana = True, digit = True)
 	add_to_resultflie(add_str)
 
 	return 0
