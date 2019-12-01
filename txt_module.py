@@ -207,14 +207,13 @@ def add_kana_daku_reinforce():
 def add_trans_hankaku():
 	title_list = []
 	title_list = get_train_title_data()
-	shuffle_list = 	title_list
-	random.shuffle(shuffle_list)
 
 	add_str = transform_list_to_str(title_list)
 	save_str = jaconv.z2h(add_str, kana = True, digit = True)
 	add_to_resultflie(save_str)
 
-	add_str = transform_list_to_str(shuffle_list)
+	random.shuffle(title_list)
+	add_str = transform_list_to_str(title_list)
 	save_str = jaconv.z2h(add_str, kana = True, digit = True)
 	add_to_resultflie(save_str)
 
