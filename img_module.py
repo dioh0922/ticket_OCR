@@ -164,8 +164,8 @@ def img_proc_filter(target):
 	img = Image.open(target)
 	gray_img = img.convert("L")
 
-	gray_img = gray_img.resize( (int(gray_img.width * 1.5), int(gray_img.height * 1.3) ) )
-
+	gray_img = gray_img.resize( (int(gray_img.width * 0.6), int(gray_img.height * 0.6) ) )
+	#gray_img = gray_img.resize( (500, 100 ) )
 	#gray_img = gray_img.filter(ImageFilter.MedianFilter())
 
 	#sharp = ImageEnhance.Sharpness(gray_img)
@@ -175,14 +175,14 @@ def img_proc_filter(target):
 	文字数が少ない方がwidthは小さい
 	幅が大きいものは膨張→ガウシアン→縮小でノイズとれる
 	漢字はぼかすと精度が落ちる
-
+	画像を小さくして識別させると多少とれる(半角以外)
 	膨張収縮は漢字と濁点がつぶれやすい
 	"""
 
 	#gray_img = img_closing(gray_img, 1)
 	#gray_img = img_opening(gray_img, 1)
 
-	gray_img = gray_img.filter(ImageFilter.GaussianBlur(0.8))
+	gray_img = gray_img.filter(ImageFilter.GaussianBlur(0.5))
 
 	result = gray_img
 	return result

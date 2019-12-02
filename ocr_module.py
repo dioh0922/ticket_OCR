@@ -72,20 +72,16 @@ def test_trained_ocr(img):
 	#print("jpn01")
 	#ocr_to_target_lang(img, "jpn01")
 
-	train = "jpn29"
+	train = "jpn32"
 
 	print(train)
 	ocr_to_target_lang(img, train)
 
-	train = "jpn30"
+	train = "jpn33"
 
 	print(train)
 	ocr_to_target_lang(img, train)
 
-	train = "jpn31"
-
-	print(train)
-	ocr_to_target_lang(img, train)
 
 #サンプルのモデルでOCRするラッパー
 def test_default_model_ocr(img):

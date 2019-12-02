@@ -33,7 +33,10 @@ elif args[1] == "-trans":
 	txt_module.add_trans_hankaku()
 	print("元のタイトルを半角に変換して追記しました")
 	exit()
-
+elif args[1] == "-spec":
+	txt_module.add_specifies()
+	print("指定した単語を追記しました")
+	exit()
 elif args[1] == "-h":
 	print("-create: 訓練用のテキストを作成する")
 	print("-kana: 半角カナ(1文字)を追加で訓練データにする")
