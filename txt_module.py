@@ -30,6 +30,15 @@ def add_to_resultflie(txt):
 
 	return 0
 
+#一定間隔ごとに開業コードを挿入する処理
+def insert_CRLF(list):
+	result = []
+	for i in range(len(list)):
+		result += list[i].rstrip("\n")
+		if (i + 1) % 30 == 0:
+			result += "\n"
+	return result
+
 #ランダムに並べ替えて訓練用の文字列に変換する処理
 def create_shuffle_txt(title_list, kana_list):
 
@@ -65,22 +74,6 @@ def create_shuffle_txt(title_list, kana_list):
 	add_to_resultflie(out_str)
 
 	return 0
-
-#渡した配列を文字列にする処理
-def transform_list_to_str(list):
-	result = ""
-	for i in range(len(list)):
-		result += list[i]
-		if (i + 1) % 30 == 0:
-			result += "\n"
-	return result
-
-#渡した配列を文字列にする(一定間隔の改行を含めない)
-def transform_list_to_str_noCRLF(list):
-	result = ""
-	for i in range(len(list)):
-		result += list[i]
-	return result
 
 #訓練用のテキストを取得する処理
 def get_train_title_data():
@@ -121,35 +114,34 @@ def create_train_txt():
 	5.文章配列を参照しながら半角濁点を差し込み、ファイル出力する(一定間隔で改行する)
 	"""
 
-	title_list = []	#半角カナのため濁音は2文字
+	train_list = []	#半角カナのため濁音は2文字
+
 	get_list = get_train_title_data()
 	get_list += get_train_kana_data()
 
 	for i in get_list:
-		title_list += i.rstrip("\n")
+		train_list += i.rstrip("\n")
 
-	random.shuffle(title_list)
+	random.shuffle(train_list)
 
 	kana_list = []
 	kana_list = get_dakuon_data()
 	random.shuffle(kana_list)
 
-	create_shuffle_txt(title_list, kana_list)
+	create_shuffle_txt(train_list, kana_list)
 
 	return 0
 
+#入れ替えずに連結して追記する処理
 def add_row_teachdata():
 	title_list = []
-
+	train_str = ""
 	get_list = get_train_title_data()
 
-	for i in get_list:
-		title_list += i.rstrip("\n")
+	title_list = insert_CRLF(get_list)
 
-	row_order = transform_list_to_str(title_list)
-
+	row_order = "".join(title_list)
 	add_to_resultflie(row_order)
-
 	return 0
 
 #半角カナを追加で半角スペース区切りと1文字改行で追加する
@@ -212,17 +204,22 @@ def add_kana_daku_reinforce():
 
 #元のタイトルを半角に変換して追記する処理
 def add_trans_hankaku():
-	title_list = []
+	train_list = []
 	get_list = get_train_title_data()
 
-	for i in get_list:
-		title_list += i.rstrip("\n")
+	#初めは順番そのままで変換して追記する
+	train_list = insert_CRLF(get_list)
 
-	add_str = transform_list_to_str(title_list)
+	add_str = "".join(train_list)
 	add_to_resultflie(jaconv.z2h(add_str, kana = True, digit = True))
 
-	random.shuffle(title_list)
-	add_str = transform_list_to_str(title_list)
+	#そのあとに順番を入れ替えて変換して追記する
+	for i in range(len(get_list)):
+		train_list += get_list[i].rstrip("\n")
+
+	random.shuffle(train_list)
+	train_list = insert_CRLF(train_list)
+	add_str = "".join(train_list)
 	add_to_resultflie(jaconv.z2h(add_str, kana = True, digit = True))
 
 	return 0
@@ -245,11 +242,22 @@ def add_specifies():
 	for i in read_list:
 		spec_list += i
 
-	add_str = transform_list_to_str_noCRLF(spec_list)
+	add_str = "".join(spec_list)
 	add_to_resultflie(add_str)
 	add_to_resultflie(jaconv.z2h(add_str, kana = True, digit = True))
 	return 0
 
-"""
-読み込み時にrstripで改行を消さずに、読み込み側で使うときに消すようにする
-"""
+#元のOCRでの訓練用テキストの取得処理
+def get_default_train_txt():
+	file = open("./train_txt/jpn_train.txt", "r", encoding = "utf-8")
+	read_list = file.read()
+	file.close()
+
+	return read_list
+
+#元の訓練テキストを追記する処理
+def add_default_train_txt():
+	train_list = get_default_train_txt()
+	train_str = "".join(train_list)
+	add_to_resultflie(train_str)
+	return 0
