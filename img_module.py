@@ -1,6 +1,7 @@
 from PIL import Image
 from PIL import ImageFilter
 from PIL import ImageEnhance
+from PIL import ImageDraw
 import numpy as np
 import matplotlib.pyplot as plt
 import ocr_module
@@ -163,10 +164,14 @@ def cut_title_area(target, position):
 def img_proc_filter(target):
 	img = Image.open(target)
 	gray_img = img.convert("L")
+	print(gray_img.width, ",", gray_img.height)
 
-	gray_img = gray_img.resize( (int(gray_img.width * 0.6), int(gray_img.height * 0.6) ) )
+	#pos_img = ImageDraw.Draw(gray_img)
+	#pos_img.rectangle((0, 0, gray_img.width, gray_img.height))
+
+	gray_img = gray_img.resize( (int(gray_img.width * 1.2), int(gray_img.height * 1.2) ) )
 	#gray_img = gray_img.resize( (500, 100 ) )
-	#gray_img = gray_img.filter(ImageFilter.MedianFilter())
+	gray_img = gray_img.filter(ImageFilter.MedianFilter())
 
 	#sharp = ImageEnhance.Sharpness(gray_img)
 	#sharp.enhance(2.0)
@@ -177,12 +182,20 @@ def img_proc_filter(target):
 	漢字はぼかすと精度が落ちる
 	画像を小さくして識別させると多少とれる(半角以外)
 	膨張収縮は漢字と濁点がつぶれやすい
+
+	・1.2倍→メディアンフィルタが多少は精度向上する
+
+	"""
+
+	"""
+	無処理の画像では12ptが精度良し
+	「・」は除外する? => 正規の文字列ではどうするか
 	"""
 
 	#gray_img = img_closing(gray_img, 1)
 	#gray_img = img_opening(gray_img, 1)
 
-	gray_img = gray_img.filter(ImageFilter.GaussianBlur(0.5))
+	#gray_img = gray_img.filter(ImageFilter.GaussianBlur(0.5))
 
 	result = gray_img
 	return result

@@ -41,6 +41,10 @@ elif args[1] == "-default":
 	txt_module.add_default_train_txt()
 	print("元の訓練テキストを追記しました")
 	exit()
+elif args[1] == "-wiki":
+	txt_module.train_txt_mining()
+	print("Wikipediaから記事を取得しました")
+	exit()
 elif args[1] == "-h":
 	print("-create: 訓練用のテキストを作成する")
 	print("-kana: 半角カナ(1文字)を追加で訓練データにする")

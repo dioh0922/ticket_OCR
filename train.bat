@@ -1,3 +1,4 @@
+@echo off
 
 python call_ocr.py -create
 

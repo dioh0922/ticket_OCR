@@ -2,7 +2,7 @@ import os
 import random
 import numpy as np
 import jaconv
-import txt_module
+import wikipedia
 
 """
 #文字列中の濁点、半濁点を1文字に統合する処理
@@ -255,9 +255,18 @@ def get_default_train_txt():
 
 	return read_list
 
-#元の訓練テキストを追記する処理
+#元の訓練テキストを処理して追記する処理
 def add_default_train_txt():
 	train_list = get_default_train_txt()
 	train_str = "".join(train_list)
 	add_to_resultflie(train_str)
+	add_to_resultflie(jaconv.z2h(train_str, kana = True, digit = True))
+	return 0
+
+#wikipediaAPIで記事から訓練用テキストを生成する
+def train_txt_mining():
+	wikipedia.set_lang("ja")
+	response = wikipedia.search("幼女戦記")
+	content = wikipedia.page(response[0])
+	print(content.content[0:100])
 	return 0
