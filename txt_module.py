@@ -77,25 +77,16 @@ def create_shuffle_txt(title_list, kana_list):
 
 #訓練用のテキストを取得する処理
 def get_train_title_data():
-	file = open("./train_txt/train_movie.txt", "r", encoding="utf-8")
-	read_list = file.read()
-	file.close()
-
-	return read_list
+	return get_target_txt("./train_txt/train_movie.txt", "utf-8")
 
 #訓練用のカナ文字列を取得する処理
 def get_train_kana_data():
-	file = open("./train_txt/train_kana.txt", "r", encoding = "utf-8")
-	read_list = file.read()
-	file.close()
-
-	return read_list
+	return get_target_txt("./train_txt/train_kana.txt", "utf-8")
 
 #半角カナ濁音のテキストを取得する処理
 def get_dakuon_data():
-	file = open("./train_txt/train_dakuon_zen.txt", "r", encoding = "utf-8")
-	read_list = file.read()
-	file.close()
+
+	read_list = get_target_txt("./train_txt/train_dakuon_zen.txt", "utf-8")
 
 	result_list = []
 	for i in read_list:
@@ -149,9 +140,7 @@ def add_kana_reinforce():
 	kana_list = []
 	kana_str = ""
 
-	file = open("./train_txt/train_kana.txt", "r", encoding = "utf-8")
-	read_list = file.read()
-	file.close()
+	read_list = get_target_txt("./train_txt/train_kana.txt", "utf-8")
 
 	for i in read_list:
 		kana_list += i.rstrip("\n")
@@ -233,9 +222,7 @@ def add_specifies():
 	for i in read_list:
 		spec_list += i
 
-	file = open("./train_txt/train_specifies.txt", "r", encoding = "utf-8")
-	read_list = file.read()
-	file.close()
+	read_list = get_target_txt("./train_txt/train_specifies.txt", "utf-8")
 
 	for i in read_list:
 		spec_list += i
@@ -247,11 +234,7 @@ def add_specifies():
 
 #元のOCRでの訓練用テキストの取得処理
 def get_default_train_txt():
-	file = open("./train_txt/jpn_train.txt", "r", encoding = "utf-8")
-	read_list = file.read()
-	file.close()
-
-	return read_list
+	return get_target_txt("./train_txt/jpn_train.txt", "utf-8")
 
 #元の訓練テキストを処理して追記する処理
 def add_default_train_txt():
@@ -263,9 +246,8 @@ def add_default_train_txt():
 
 #wikipediaAPIで記事から訓練用テキストを生成する
 def train_txt_mining():
-	file = open("./train_txt/get_wiki_list.txt", "r", encoding = "utf-8")
-	read_list = file.readlines()
-	file.close()
+
+	read_list = get_target_txt("./train_txt/get_wiki_list.txt", "utf-8")
 
 	wikipedia.set_lang("ja")
 
@@ -292,11 +274,7 @@ def train_txt_mining():
 
 #事前に取得したwikipediaの記事のファイルを読み出す処理
 def get_wiki_content_txt():
-	file = open("./train_txt/wiki_page_content.txt", "r", encoding = "utf-8")
-	read_list = file.read()
-	file.close()
-
-	return read_list
+	return get_target_txt("./train_txt/wiki_page_content.txt", "utf-8")
 
 #事前に取得したwikipediaの記事を追記する処理
 def add_wiki_content():
