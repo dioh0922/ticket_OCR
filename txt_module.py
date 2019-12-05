@@ -228,9 +228,7 @@ def add_trans_hankaku():
 def add_specifies():
 	spec_list = []
 
-	file = open("./train_txt/train_movie.txt", "r", encoding = "utf-8")
-	read_list = file.read()
-	file.close()
+	read_list = get_train_title_data()
 
 	for i in read_list:
 		spec_list += i
@@ -265,8 +263,54 @@ def add_default_train_txt():
 
 #wikipediaAPIで記事から訓練用テキストを生成する
 def train_txt_mining():
+	file = open("./train_txt/get_wiki_list.txt", "r", encoding = "utf-8")
+	read_list = file.readlines()
+	file.close()
+
 	wikipedia.set_lang("ja")
-	response = wikipedia.search("幼女戦記")
-	content = wikipedia.page(response[0])
-	print(content.content[0:100])
+
+	txt = ""
+	str = ""
+
+	for i in read_list:
+		print(i.rstrip("\n"),"の取得完了")
+		response = wikipedia.search(i)
+		content = wikipedia.page(response[0])
+		str += content.content[0:200]
+
+	for i in range(len(str)):
+		txt += str[i].rstrip("\n")
+		if (i + 1) % 30 == 0:
+			txt += "\n"
+
+	file = open("./train_txt/wiki_page_content.txt", "a", encoding = "utf-8")
+	file.write(txt)
+	file.write("\n")
+	file.close()
+
 	return 0
+
+#事前に取得したwikipediaの記事のファイルを読み出す処理
+def get_wiki_content_txt():
+	file = open("./train_txt/wiki_page_content.txt", "r", encoding = "utf-8")
+	read_list = file.read()
+	file.close()
+
+	return read_list
+
+#事前に取得したwikipediaの記事を追記する処理
+def add_wiki_content():
+	wiki_content = get_wiki_list()
+	train_str = "".join(wiki_content)
+	add_to_resultflie(train_str)
+	add_to_resultflie(jaconv.z2h(train_str, kana = True, digit = True))
+
+	return 0
+
+#指定したファイルを指定した文字コードで取得するラッパー関数
+def get_target_txt(target, encoding):
+	file = open(target, "r", encoding = encoding)
+	read_list = file.read()
+	file.close()
+
+	return read_list
