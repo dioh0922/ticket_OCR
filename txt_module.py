@@ -3,6 +3,7 @@ import random
 import numpy as np
 import jaconv
 import wikipedia
+from concurrent.futures import ThreadPoolExecutor
 
 """
 #文字列中の濁点、半濁点を1文字に統合する処理
@@ -246,18 +247,25 @@ def add_default_train_txt():
 #wikipediaAPIで記事から訓練用テキストを生成する
 def train_txt_mining():
 
-	read_list = get_target_txt("./train_txt/get_wiki_list.txt", "utf-8")
-
-	wikipedia.set_lang("ja")
+	file = open("./train_txt/get_wiki_list.txt", "r", encoding = "utf-8")
+	read_list = file.readlines()
+	file.close()
 
 	txt = ""
 	str = ""
 
+	executor = ThreadPoolExecutor(max_workers=10)
+	get_pages = []
+
 	for i in read_list:
 		print(i.rstrip("\n"),"の取得完了")
-		response = wikipedia.search(i)
-		content = wikipedia.page(response[0])
-		str += content.content[0:200]
+		future = executor.submit(send_wiki_page_request, i)
+		get_pages.append(future)
+
+	for i in get_pages:
+		str += i.result()
+
+	executor.shutdown()
 
 	for i in range(len(str)):
 		txt += str[i].rstrip("\n")
@@ -270,6 +278,14 @@ def train_txt_mining():
 	file.close()
 
 	return 0
+
+def send_wiki_page_request(target):
+	str = ""
+	wikipedia.set_lang("ja")
+	response = wikipedia.search(target)
+	content = wikipedia.page(response[0])
+	str += content.content[0:300]
+	return str
 
 #事前に取得したwikipediaの記事のファイルを読み出すラッパー
 def get_wiki_content_txt():
