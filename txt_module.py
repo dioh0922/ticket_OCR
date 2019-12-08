@@ -198,16 +198,11 @@ def add_trans_hankaku():
 
 	#初めは順番そのままで変換して追記する
 	train_list = insert_CRLF(get_list)
-
 	add_str = "".join(train_list)
 	add_to_resultflie(jaconv.z2h(add_str, kana = True, digit = True))
 
 	#そのあとに順番を入れ替えて変換して追記する
-	for i in range(len(get_list)):
-		train_list += get_list[i].rstrip("\n")
-
-	random.shuffle(train_list)
-	train_list = insert_CRLF(train_list)
+	train_list = trans_order_list(train_list)
 	add_str = "".join(train_list)
 	add_to_resultflie(jaconv.z2h(add_str, kana = True, digit = True))
 
@@ -223,6 +218,7 @@ def add_specifies():
 		spec_list += i
 
 	read_list = get_target_txt("./train_txt/train_specifies.txt", "utf-8")
+	#read_list += get_target_txt("./train_txt/wiki_page_content.txt", "utf-8")
 
 	for i in read_list:
 		spec_list += i
@@ -230,6 +226,9 @@ def add_specifies():
 	add_str = "".join(spec_list)
 	add_to_resultflie(add_str)
 	add_to_resultflie(jaconv.z2h(add_str, kana = True, digit = True))
+
+	add_wiki_content()
+
 	return 0
 
 #元のOCRでの訓練用テキストの取得処理
@@ -272,23 +271,50 @@ def train_txt_mining():
 
 	return 0
 
-#事前に取得したwikipediaの記事のファイルを読み出す処理
+#事前に取得したwikipediaの記事のファイルを読み出すラッパー
 def get_wiki_content_txt():
 	return get_target_txt("./train_txt/wiki_page_content.txt", "utf-8")
 
 #事前に取得したwikipediaの記事を追記する処理
 def add_wiki_content():
-	wiki_content = get_wiki_list()
+	wiki_content = get_wiki_content_txt()
 	train_str = "".join(wiki_content)
 	add_to_resultflie(train_str)
 	add_to_resultflie(jaconv.z2h(train_str, kana = True, digit = True))
 
+	add_wiki_content_trans()
+
 	return 0
 
-#指定したファイルを指定した文字コードで取得するラッパー関数
+#取得しておいた記事の文字列を並べ替えて追記する処理
+def add_wiki_content_trans():
+	wiki_content = get_wiki_content_txt()
+	train_list = []
+
+	train_list = trans_order_list(wiki_content)
+
+	str = "".join(train_list)
+	add_to_resultflie(str)
+	add_to_resultflie(jaconv.z2h(str, kana = True, digit = True))
+
+	return 0
+
+#指定したファイルを指定した文字コードで取得する関数
 def get_target_txt(target, encoding):
 	file = open(target, "r", encoding = encoding)
 	read_list = file.read()
 	file.close()
 
 	return read_list
+
+#順番を入れ替えた配列に変換する処理
+def trans_order_list(list):
+	trans_list = []
+
+	for i in list:
+		trans_list += i.rstrip("\n")
+
+	random.shuffle(trans_list)
+	trans_list = insert_CRLF(trans_list)
+
+	return trans_list
