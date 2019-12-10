@@ -95,16 +95,9 @@ def area_img_to_ocr(target, position):
 
 	bin_img = img_proc_binary(target)
 	bin_img = bin_img.crop(position)
-	bin_img.show()
+	#bin_img.show()
 
-	"""
-	title_area_ocr_wrapper(bin_img)
-
-	pre_img = bin_img.resize( (bin_img.width + 200, bin_img.height) )
-	pre_img.show()
-
-	title_area_ocr_wrapper(pre_img)
-	"""
+	ocr_module.test_trained_ocr(bin_img)
 
 #タイトル領域に対してOCRして結果を取得する処理 (debug用)
 def title_area_ocr_wrapper(img):
@@ -133,7 +126,7 @@ def img_proc_binary(target):
 	#bin_img = img_closing(bin_img, 1)
 	#bin_img = img_opening(bin_img, 1)
 
-	show_img_histogram(bin_img)
+	#show_img_histogram(bin_img)
 
 	return bin_img
 

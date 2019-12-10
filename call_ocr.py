@@ -85,8 +85,24 @@ if 3 <= len(args):
 	elif args[2] == "-s":
 		img_module.test_default_model(args[1])
 
-	elif args[2] == "-w":
-		print(txt_module.txt_dakuten_marge("カ”－ルスﾞ") )
+	elif args[2] == "-try":
+		img = Image.open(args[1])
+		img.show()
+		
+		img_list = glob.glob("./get_result/" + "*")
+		for i in img_list:
+			os.remove(i)
+		#指定した画像からタイトル領域を取得する
+		detected_area = img_module.ticket_threshold(args[1])
+
+		img_module.area_img_to_ocr(args[1], detected_area)
+		#OCR処理で画像を取得しておき、画像を全て表示してみる
+		img_list = glob.glob("./get_result/" + "*")
+
+		for i in img_list:
+			img = Image.open(i)
+			img.show()
+		exit()
 
 	elif args[2] == "-h":
 		print("-t: 訓練モデル全てでタイトル画像にOCR")
