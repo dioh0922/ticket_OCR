@@ -1,5 +1,8 @@
 import sys
 import io
+import os
+import glob
+from PIL import Image
 
 import ocr_module
 import img_module
@@ -55,7 +58,19 @@ elif args[1] == "-h":
 
 if 3 <= len(args):
 	if args[2] == "-t":
+		#前の検索結果を消しておく(本番環境ではAPI側で先に消す)
+		img_list = glob.glob("./get_result/" + "*")
+		for i in img_list:
+			os.remove(i)
 		img_module.test_trained_model(args[1])
+
+		#OCR処理で画像を取得しておき、画像を全て表示してみる
+		img_list = glob.glob("./get_result/" + "*")
+
+		for i in img_list:
+			img = Image.open(i)
+			img.show()
+
 
 	elif args[2] == "-c":
 		detected_area = img_module.ticket_threshold(args[1])

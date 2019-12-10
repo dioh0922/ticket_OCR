@@ -3,6 +3,9 @@ from PIL import ImageDraw
 import pyocr
 import pyocr.builders
 import os
+import glob
+from icrawler.builtin import GoogleImageCrawler
+import txt_module
 
 #画像データ自体を渡してOCRする
 def target_to_ocr(img):
@@ -62,7 +65,10 @@ def ocr_to_target_lang(img, language):
 			)
 
 		for txt in box:
-			print("文字列:",txt.content)
+			detect_word = txt_module.cnv_hankaku(txt.content)
+			print("文字列:",detect_word)
+			crawler = GoogleImageCrawler(storage={"root_dir" : "get_result"})
+			crawler.crawl(keyword=detect_word, max_num=3)
 
 	except Exception as e:
 		print(e)
@@ -72,7 +78,7 @@ def test_trained_ocr(img):
 	#print("jpn01")
 	#ocr_to_target_lang(img, "jpn01")
 
-	train = "jpn46"
+	train = "jpn48"
 
 	print(train)
 	ocr_to_target_lang(img, train)

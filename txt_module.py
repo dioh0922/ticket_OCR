@@ -3,6 +3,7 @@ import random
 import numpy as np
 import jaconv
 import wikipedia
+import time
 from concurrent.futures import ThreadPoolExecutor
 
 """
@@ -21,6 +22,10 @@ def dakuon_exchange(word):
 		result = word
 	return result
 """
+
+#文字列を全角に変換するラッパー関数
+def cnv_hankaku(txt):
+	return jaconv.h2z(txt, kana=True)
 
 #与えた文字列を結果ファイルに追記する処理
 def add_to_resultflie(txt):
@@ -254,11 +259,13 @@ def train_txt_mining():
 	txt = ""
 	str = ""
 
-	executor = ThreadPoolExecutor(max_workers=10)
+	executor = ThreadPoolExecutor(max_workers=15)
 	get_pages = []
 
+	st = time.time()
+
 	for i in read_list:
-		print(i.rstrip("\n"),"の取得完了")
+		#print(i.rstrip("\n"),"の取得完了")
 		future = executor.submit(send_wiki_page_request, i)
 		get_pages.append(future)
 
@@ -266,6 +273,10 @@ def train_txt_mining():
 		str += i.result()
 
 	executor.shutdown()
+
+	now = time.time()
+
+	print("%#.2f秒かかりました" % (now - st) )
 
 	for i in range(len(str)):
 		txt += str[i].rstrip("\n")
@@ -284,7 +295,7 @@ def send_wiki_page_request(target):
 	wikipedia.set_lang("ja")
 	response = wikipedia.search(target)
 	content = wikipedia.page(response[0])
-	str += content.content[0:300]
+	str += content.content[0:500]
 	return str
 
 #事前に取得したwikipediaの記事のファイルを読み出すラッパー
