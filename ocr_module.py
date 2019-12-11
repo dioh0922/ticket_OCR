@@ -64,6 +64,7 @@ def ocr_to_target_lang(img, language):
 			builder=pyocr.builders.LineBoxBuilder(tesseract_layout=6)
 			)
 
+		"""
 		#複数が抽出された場合は最大の長さのもので検索する
 		txt = get_maxlen_content(box)
 		detect_word = txt_module.cnv_hankaku(txt)
@@ -74,19 +75,11 @@ def ocr_to_target_lang(img, language):
 		for txt in box:
 			detect_word = txt_module.cnv_hankaku(txt.content)
 			print("文字列:",detect_word)
-			crawler = GoogleImageCrawler(storage={"root_dir" : "get_result"})
-			crawler.crawl(keyword=detect_word, max_num=3)
-		"""
+
+		return box
+
 	except Exception as e:
 		print(e)
-
-#最大の文字列の抽出結果を取得する処理
-def get_maxlen_content(list):
-	result = list[0].content
-	for i in range(1, len(list), 1):
-		if len(result) < len(list[i].content):
-			result = list[i].content
-	return result
 
 #訓練した教師データでテストする処理
 def test_trained_ocr(img):
@@ -96,8 +89,9 @@ def test_trained_ocr(img):
 	train = "jpn48"
 
 	print(train)
-	ocr_to_target_lang(img, train)
+	list = ocr_to_target_lang(img, train)
 
+	return list
 
 #サンプルのモデルでOCRするラッパー
 def test_default_model_ocr(img):

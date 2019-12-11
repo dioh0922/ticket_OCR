@@ -4,7 +4,9 @@ from PIL import ImageEnhance
 from PIL import ImageDraw
 import numpy as np
 import matplotlib.pyplot as plt
+from icrawler.builtin import GoogleImageCrawler
 import ocr_module
+import txt_module
 
 
 threshold = 80		#2値化するしきい値 経験的に50あたりが文字の印字部分
@@ -39,6 +41,14 @@ def show_img_histogram(img):
 	plt.plot(img.histogram())
 	plt.show()
 
+#OCRの結果配列から画像を特定のディレクトリに保存する処理
+def get_img_result_word(list):
+	txt = get_maxlen_content(list)
+	detect_word = txt_module.cnv_hankaku(txt)
+	crawler = GoogleImageCrawler(storage={"root_dir" : "get_result"})
+	crawler.crawl(keyword=detect_word, max_num=3)
+
+#
 def ticket_threshold(target):
 	img = Image.open(target)
 	gray_img = img.convert("L")
@@ -97,7 +107,9 @@ def area_img_to_ocr(target, position):
 	bin_img = bin_img.crop(position)
 	#bin_img.show()
 
-	ocr_module.test_trained_ocr(bin_img)
+	detect_list = ocr_module.test_trained_ocr(bin_img)
+
+	get_img_result_word(detect_list)
 
 #タイトル領域に対してOCRして結果を取得する処理 (debug用)
 def title_area_ocr_wrapper(img):
@@ -130,6 +142,18 @@ def img_proc_binary(target):
 
 	return bin_img
 
+#最大の文字列の抽出結果を取得する処理
+def get_maxlen_content(list):
+	result = ""
+	if len(list) > 1:
+		result = list[0].content
+		for i in range(1, len(list), 1):
+			if len(result) < len(list[i].content):
+				result = list[i].content
+	else:
+		result = list[0].content
+	return result
+
 #各学習済の元の学習データでOCRする処理(debug用)
 def test_default_model(target):
 	gray_img = img_proc_filter(target)
@@ -143,7 +167,9 @@ def test_trained_model(target):
 
 	gray_img.show()
 
-	ocr_module.test_trained_ocr(gray_img)
+	detect_list = ocr_module.test_trained_ocr(gray_img)
+
+	get_img_result_word(detect_list)
 
 #タイトル領域に画像を切り出す(debug用)
 def cut_title_area(target, position):
