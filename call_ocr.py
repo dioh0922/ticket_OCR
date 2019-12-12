@@ -44,9 +44,13 @@ elif args[1] == "-default":
 	txt_module.add_default_train_txt()
 	print("元の訓練テキストを追記しました")
 	exit()
-elif args[1] == "-wiki":
-	txt_module.train_txt_mining()
+elif args[1] == "-crawling":
+	txt_module.train_txt_crawling()
 	print("Wikipediaから記事を取得しました")
+	exit()
+elif args[1] == "-wiki":
+	txt_module.add_wiki_content()
+	print("Wikipediaの記事を訓練テキストに追記しました")
 	exit()
 elif args[1] == "-h":
 	print("-create: 訓練用のテキストを作成する")
@@ -54,6 +58,7 @@ elif args[1] == "-h":
 	print("-row: タイトルなどのデータを入れ替えずに訓練データにする")
 	print("-daku: 半角カナ濁音を追加で訓練データにする")
 	print("-trans: タイトルの文字列を半角に変換して記録する")
+	print("-spec: wikiや事前に決めた単語を追記する")
 	exit()
 
 if 3 <= len(args):
@@ -88,7 +93,7 @@ if 3 <= len(args):
 	elif args[2] == "-try":
 		img = Image.open(args[1])
 		img.show()
-		
+
 		img_list = glob.glob("./get_result/" + "*")
 		for i in img_list:
 			os.remove(i)

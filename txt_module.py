@@ -6,30 +6,16 @@ import wikipedia
 import time
 from concurrent.futures import ThreadPoolExecutor
 
-"""
-#文字列中の濁点、半濁点を1文字に統合する処理
-def txt_dakuten_marge(txt):
-	tmp_txt = txt
-	for word in tmp_txt:
-		print(word)
-	return 0
-
-#濁点を発見したら1文字に変換させる処理
-def dakuon_exchange(word):
-	if word == "カ":
-		result = "ガ"
-	else:
-		result = word
-	return result
-"""
+TRAIN_TXT = "test_train.txt"
+UTF8 = "utf-8"
 
 #文字列を全角に変換するラッパー関数
 def cnv_hankaku(txt):
-	return jaconv.h2z(txt, kana=True)
+	return jaconv.h2z(txt, kana=True, digit=True)
 
 #与えた文字列を結果ファイルに追記する処理
 def add_to_resultflie(txt):
-	file = open("test_train.txt", "a", encoding = "utf-8")
+	file = open(TRAIN_TXT, "a", encoding = UTF8)
 	file.write(txt)
 	file.write("\n")
 	file.close()
@@ -83,16 +69,16 @@ def create_shuffle_txt(title_list, kana_list):
 
 #訓練用のテキストを取得する処理
 def get_train_title_data():
-	return get_target_txt("./train_txt/train_movie.txt", "utf-8")
+	return get_target_txt("./train_txt/train_movie.txt", UTF8)
 
 #訓練用のカナ文字列を取得する処理
 def get_train_kana_data():
-	return get_target_txt("./train_txt/train_kana.txt", "utf-8")
+	return get_target_txt("./train_txt/train_kana.txt", UTF8)
 
 #半角カナ濁音のテキストを取得する処理
 def get_dakuon_data():
 
-	read_list = get_target_txt("./train_txt/train_dakuon_zen.txt", "utf-8")
+	read_list = get_target_txt("./train_txt/train_dakuon_zen.txt", UTF8)
 
 	result_list = []
 	for i in read_list:
@@ -102,14 +88,6 @@ def get_dakuon_data():
 
 #訓練用のテキストを生成し出力する処理
 def create_train_txt():
-	"""
-	1.サンプルの文章を読み取り、文字ごとに乱数で順番を入れ替える(改行は取る)
-	2.半角濁点用のファイルを読み取り、改行を取る
-	3.半角濁点の要素を指すインデックスの配列を作り
-	  乱数で入れ替える(2文字で1つのため増分2で参照していく)
-	4.文章配列の長さの範囲で乱数の配列を生成する(該当位置に半角濁点を差し込む)
-	5.文章配列を参照しながら半角濁点を差し込み、ファイル出力する(一定間隔で改行する)
-	"""
 
 	train_list = []	#半角カナのため濁音は2文字
 
@@ -126,6 +104,10 @@ def create_train_txt():
 	random.shuffle(kana_list)
 
 	create_shuffle_txt(train_list, kana_list)
+
+	row_order = "".join(get_list)
+	add_to_resultflie(row_order)
+
 
 	return 0
 
@@ -146,7 +128,7 @@ def add_kana_reinforce():
 	kana_list = []
 	kana_str = ""
 
-	read_list = get_target_txt("./train_txt/train_kana.txt", "utf-8")
+	read_list = get_target_txt("./train_txt/train_kana.txt", UTF8)
 
 	for i in read_list:
 		kana_list += i.rstrip("\n")
@@ -223,7 +205,7 @@ def add_specifies():
 	for i in read_list:
 		spec_list += i
 
-	read_list = get_target_txt("./train_txt/train_specifies.txt", "utf-8")
+	read_list = get_target_txt("./train_txt/train_specifies.txt", UTF8)
 	#read_list += get_target_txt("./train_txt/wiki_page_content.txt", "utf-8")
 
 	for i in read_list:
@@ -239,7 +221,7 @@ def add_specifies():
 
 #元のOCRでの訓練用テキストの取得処理
 def get_default_train_txt():
-	return get_target_txt("./train_txt/jpn_train.txt", "utf-8")
+	return get_target_txt("./train_txt/jpn_train.txt", UTF8)
 
 #元の訓練テキストを処理して追記する処理
 def add_default_train_txt():
@@ -250,9 +232,9 @@ def add_default_train_txt():
 	return 0
 
 #wikipediaAPIで記事から訓練用テキストを生成する
-def train_txt_mining():
+def train_txt_crawling():
 
-	file = open("./train_txt/get_wiki_list.txt", "r", encoding = "utf-8")
+	file = open("./train_txt/get_wiki_list.txt", "r", encoding = UTF8)
 	read_list = file.readlines()
 	file.close()
 
@@ -283,24 +265,25 @@ def train_txt_mining():
 		if (i + 1) % 30 == 0:
 			txt += "\n"
 
-	file = open("./train_txt/wiki_page_content.txt", "a", encoding = "utf-8")
+	file = open("./train_txt/wiki_page_content.txt", "a", encoding = UTF8)
 	file.write(txt)
 	file.write("\n")
 	file.close()
 
 	return 0
 
+#wikipediaから記事を取得する処理
 def send_wiki_page_request(target):
 	str = ""
 	wikipedia.set_lang("ja")
 	response = wikipedia.search(target)
 	content = wikipedia.page(response[0])
-	str += content.content[0:500]
+	str += content.content[0:1000]
 	return str
 
 #事前に取得したwikipediaの記事のファイルを読み出すラッパー
 def get_wiki_content_txt():
-	return get_target_txt("./train_txt/wiki_page_content.txt", "utf-8")
+	return get_target_txt("./train_txt/wiki_page_content.txt", UTF8)
 
 #事前に取得したwikipediaの記事を追記する処理
 def add_wiki_content():
@@ -309,7 +292,7 @@ def add_wiki_content():
 	add_to_resultflie(train_str)
 	add_to_resultflie(jaconv.z2h(train_str, kana = True, digit = True))
 
-	add_wiki_content_trans()
+	#add_wiki_content_trans()
 
 	return 0
 
