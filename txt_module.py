@@ -4,14 +4,17 @@ import numpy as np
 import jaconv
 import wikipedia
 import time
+import revision_module
 from concurrent.futures import ThreadPoolExecutor
 
 TRAIN_TXT = "test_train.txt"
 UTF8 = "utf-8"
 
-#文字列を全角に変換するラッパー関数
-def cnv_hankaku(txt):
-	return jaconv.h2z(txt, kana=True, digit=True)
+#テキスト補正処理のラッパー関数
+def revision_txt(row_txt):
+	proc_txt = jaconv.z2h(row_txt, digit=True)
+	#半角を全角にした後に登録したパターンで補正する
+	return revision_module.revision_from_dictionary(jaconv.h2z(proc_txt, kana=True))
 
 #与えた文字列を結果ファイルに追記する処理
 def add_to_resultflie(txt):
@@ -277,8 +280,10 @@ def send_wiki_page_request(target):
 	str = ""
 	wikipedia.set_lang("ja")
 	response = wikipedia.search(target)
-	content = wikipedia.page(response[0])
-	str += content.content[0:1000]
+	if len(response) > 0:
+		content = wikipedia.page(response[0])
+		str += content.content[0:275]
+	#取得する文字数が大きくなる=>ファイルが1000kB程度で過学習っぽい結果になる
 	return str
 
 #事前に取得したwikipediaの記事のファイルを読み出すラッパー

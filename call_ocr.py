@@ -52,6 +52,9 @@ elif args[1] == "-wiki":
 	txt_module.add_wiki_content()
 	print("Wikipediaの記事を訓練テキストに追記しました")
 	exit()
+elif args[1] == "-rev":
+	print(txt_module.revision_txt("4DX ｶﾞ -ﾙス筈 ＆パ ンツァー1+2話"))
+	exit()
 elif args[1] == "-h":
 	print("-create: 訓練用のテキストを作成する")
 	print("-kana: 半角カナ(1文字)を追加で訓練データにする")
@@ -67,15 +70,12 @@ if 3 <= len(args):
 		img_list = glob.glob("./get_result/" + "*")
 		for i in img_list:
 			os.remove(i)
-		img_module.test_trained_model(args[1])
 
-		#OCR処理で画像を取得しておき、画像を全て表示してみる
-		img_list = glob.glob("./get_result/" + "*")
+		gray_img = img_module.img_proc_filter(args[1])
 
-		for i in img_list:
-			img = Image.open(i)
-			img.show()
+		gray_img.show()
 
+		detect_list = ocr_module.test_trained_ocr(gray_img)
 
 	elif args[2] == "-c":
 		detected_area = img_module.ticket_threshold(args[1])

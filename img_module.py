@@ -44,7 +44,7 @@ def show_img_histogram(img):
 #OCRの結果配列から画像を特定のディレクトリに保存する処理
 def get_img_result_word(list):
 	txt = get_maxlen_content(list)
-	detect_word = txt_module.cnv_hankaku(txt)
+	detect_word = txt_module.revision_txt(txt)
 	crawler = GoogleImageCrawler(storage={"root_dir" : "get_result"})
 	crawler.crawl(keyword=detect_word, max_num=3)
 

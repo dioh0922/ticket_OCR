@@ -64,17 +64,10 @@ def ocr_to_target_lang(img, language):
 			builder=pyocr.builders.LineBoxBuilder(tesseract_layout=6)
 			)
 
-		"""
-		#複数が抽出された場合は最大の長さのもので検索する
-		txt = get_maxlen_content(box)
-		detect_word = txt_module.cnv_hankaku(txt)
-		print("文字列:",detect_word)
-		crawler = GoogleImageCrawler(storage={"root_dir" : "get_result"})
-		crawler.crawl(keyword=detect_word, max_num=3)
-		"""
 		for txt in box:
-			detect_word = txt_module.cnv_hankaku(txt.content)
-			print("文字列:",detect_word)
+			detect_word = txt_module.revision_txt(txt.content)
+			print("抽出文字列:", txt.content)
+			print("補正文字列:",detect_word)
 
 		return box
 
