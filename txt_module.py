@@ -16,6 +16,11 @@ def revision_txt(row_txt):
 	#半角を全角にした後に登録したパターンで補正する
 	return revision_module.revision_from_dictionary(jaconv.h2z(proc_txt, kana=True))
 
+#識別結果を補正し確認する処理
+def print_detect_word(txt):
+	print("補正前:",txt)
+	print("補正後:",revision_txt(txt))
+
 #与えた文字列を結果ファイルに追記する処理
 def add_to_resultflie(txt):
 	file = open(TRAIN_TXT, "a", encoding = UTF8)
@@ -108,8 +113,9 @@ def create_train_txt():
 
 	create_shuffle_txt(train_list, kana_list)
 
-	row_order = "".join(get_list)
-	add_to_resultflie(row_order)
+	#jpn48では元の並び順はここでは追記しないためコメントアウト
+	#row_order = "".join(get_list)
+	#add_to_resultflie(row_order)
 
 
 	return 0
@@ -205,10 +211,7 @@ def add_specifies():
 
 	read_list = get_train_title_data()
 
-	for i in read_list:
-		spec_list += i
-
-	read_list = get_target_txt("./train_txt/train_specifies.txt", UTF8)
+	read_list += get_target_txt("./train_txt/train_specifies.txt", UTF8)
 	#read_list += get_target_txt("./train_txt/wiki_page_content.txt", "utf-8")
 
 	for i in read_list:
@@ -216,9 +219,14 @@ def add_specifies():
 
 	add_str = "".join(spec_list)
 	add_to_resultflie(add_str)
+
+	wiki_content = get_wiki_content_txt()
+	train_str = "".join(wiki_content)
+	add_to_resultflie(train_str)
+
 	add_to_resultflie(jaconv.z2h(add_str, kana = True, digit = True))
 
-	add_wiki_content()
+	add_to_resultflie(jaconv.z2h(train_str, kana = True, digit = True))
 
 	return 0
 
@@ -282,24 +290,13 @@ def send_wiki_page_request(target):
 	response = wikipedia.search(target)
 	if len(response) > 0:
 		content = wikipedia.page(response[0])
-		str += content.content[0:275]
+		str += content.content[0:150]
 	#取得する文字数が大きくなる=>ファイルが1000kB程度で過学習っぽい結果になる
 	return str
 
 #事前に取得したwikipediaの記事のファイルを読み出すラッパー
 def get_wiki_content_txt():
 	return get_target_txt("./train_txt/wiki_page_content.txt", UTF8)
-
-#事前に取得したwikipediaの記事を追記する処理
-def add_wiki_content():
-	wiki_content = get_wiki_content_txt()
-	train_str = "".join(wiki_content)
-	add_to_resultflie(train_str)
-	add_to_resultflie(jaconv.z2h(train_str, kana = True, digit = True))
-
-	#add_wiki_content_trans()
-
-	return 0
 
 #取得しておいた記事の文字列を並べ替えて追記する処理
 def add_wiki_content_trans():

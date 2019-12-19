@@ -64,11 +64,6 @@ def ocr_to_target_lang(img, language):
 			builder=pyocr.builders.LineBoxBuilder(tesseract_layout=6)
 			)
 
-		for txt in box:
-			detect_word = txt_module.revision_txt(txt.content)
-			print("抽出文字列:", txt.content)
-			print("補正文字列:",detect_word)
-
 		return box
 
 	except Exception as e:
@@ -76,12 +71,9 @@ def ocr_to_target_lang(img, language):
 
 #訓練した教師データでテストする処理
 def test_trained_ocr(img):
-	#print("jpn01")
-	#ocr_to_target_lang(img, "jpn01")
 
 	train = "jpn48"
 
-	print(train)
 	list = ocr_to_target_lang(img, train)
 
 	return list

@@ -19,26 +19,32 @@ if 2 > len(args):
 elif args[1] == "-create":
 	txt_module.create_train_txt()
 	print("訓練用のテキストを作成しました")
+	txt_module.add_to_resultflie("-create")
 	exit()
 elif args[1] == "-kana":
 	txt_module.add_kana_reinforce()
 	print("半角カナの追記をしました")
+	txt_module.add_to_resultflie("-kana")
 	exit()
 elif args[1] == "-daku":
 	txt_module.add_kana_daku_reinforce()
 	print("半角カナ濁音の追記をしました")
+	txt_module.add_to_resultflie("-daku")
 	exit()
 elif args[1] == "-row":
 	txt_module.add_row_teachdata()
 	print("順番を入れ替えずに訓練用のテキストを作成しました")
+	txt_module.add_to_resultflie("-row")
 	exit()
 elif args[1] == "-trans":
 	txt_module.add_trans_hankaku()
 	print("元のタイトルを半角に変換して追記しました")
+	txt_module.add_to_resultflie("-trans")
 	exit()
 elif args[1] == "-spec":
 	txt_module.add_specifies()
 	print("指定した単語を追記しました")
+	txt_module.add_to_resultflie("-spec")
 	exit()
 elif args[1] == "-default":
 	txt_module.add_default_train_txt()
@@ -76,6 +82,9 @@ if 3 <= len(args):
 		gray_img.show()
 
 		detect_list = ocr_module.test_trained_ocr(gray_img)
+
+		for txt in detect_list:
+			txt_module.print_detect_word(txt.content)
 
 	elif args[2] == "-c":
 		detected_area = img_module.ticket_threshold(args[1])
@@ -119,12 +128,43 @@ if 3 <= len(args):
 	else:
 		print("error debug option")
 	exit()
-#ocr_module.ocr(args[1])
-#img_module.img_to_gray(args[1])
+
+#本処理(ブラウザ上でも同じような手順を行う)
+"""
+領域抽出 => デフォルトのモデル
+内容抽出 => 強化したモデル
+で分けて使う
+"""
+img = Image.open(args[1])
+
+img_list = glob.glob("./get_result/" + "*")
+for i in img_list:
+	os.remove(i)
 
 #指定した画像からタイトル領域を取得する
-#detected_area = img_module.ticket_threshold(args[1])
+#各領域の画像を./areaに書き出す(以降はこれを使って識別する)
+detected_area = img_module.ticket_threshold(args[1])
+
+if detected_area <= 0:
+	exit()
+
+print("どの画像を表示するか?")
+i = input()
+
+target_img = "./area/" + i + ".jpg"
+
+gray_img = img_module.img_proc_filter(target_img)
+
+detect_list = ocr_module.test_trained_ocr(gray_img)
+
+for txt in detect_list:
+	txt_module.print_detect_word(txt.content)
+
 
 #img_module.area_img_to_ocr(args[1], detected_area)
+#OCR処理で画像を取得しておき、画像を全て表示してみる
+img_list = glob.glob("./get_result/" + "*")
 
-print("処理が終わりました")
+for i in img_list:
+	img = Image.open(i)
+	img.show()

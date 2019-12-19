@@ -9,7 +9,7 @@ import ocr_module
 import txt_module
 
 
-threshold = 80		#2値化するしきい値 経験的に50あたりが文字の印字部分
+threshold = 100		#2値化するしきい値 経験的に50あたりが文字の印字部分
 threshold_half_up = 100	#領域抽出後の2値化のしきい値
 
 #2値化の画素値の指定用定数
@@ -86,19 +86,24 @@ def ticket_threshold(target):
 			x_en = iter.position[1][0]
 			y_en = iter.position[1][1]
 			im_cut = rem_noise_img.crop((x_st, y_st, x_en, y_en))
-			print(cnt, ":" ,iter.content)
+			img_name = "./area/" + str(cnt) + ".jpg"
+			im_cut.save(img_name)
+			#print(cnt, ":" ,iter.content)
 
 			cnt = cnt + 1
-			#img_arr.append(im_cut)
-			area_point_arr.append([x_st, y_st, x_en, y_en])
+			#area_point_arr.append([x_st, y_st, x_en, y_en])
 
-	if len(area_point_arr) < 1:
+	#if len(area_point_arr) < 1:
+	if len(pos) < 1:
 		print("抽出できません")
 		exit()
 
+	"""
 	print("どの画像を表示するか?")
 	i = input()
 	return area_point_arr[int(i)]
+	"""
+	return len(pos)
 
 #取得した領域に対してOCRする処理
 def area_img_to_ocr(target, position):
@@ -169,6 +174,9 @@ def test_trained_model(target):
 
 	detect_list = ocr_module.test_trained_ocr(gray_img)
 
+	for i in detect_list:
+		txt_module.print_detect_word(i.content)
+
 	get_img_result_word(detect_list)
 
 #タイトル領域に画像を切り出す(debug用)
@@ -183,7 +191,6 @@ def cut_title_area(target, position):
 def img_proc_filter(target):
 	img = Image.open(target)
 	gray_img = img.convert("L")
-	print(gray_img.width, ",", gray_img.height)
 
 	#pos_img = ImageDraw.Draw(gray_img)
 	#pos_img.rectangle((0, 0, gray_img.width, gray_img.height))
@@ -195,23 +202,7 @@ def img_proc_filter(target):
 	#sharp = ImageEnhance.Sharpness(gray_img)
 	#sharp.enhance(2.0)
 
-	"""
-	文字数が少ない方がwidthは小さい
-	幅が大きいものは膨張→ガウシアン→縮小でノイズとれる
-	漢字はぼかすと精度が落ちる
-	画像を小さくして識別させると多少とれる(半角以外)
-	膨張収縮は漢字と濁点がつぶれやすい
-
-	・1.2倍→メディアンフィルタが多少は精度向上する
-
-	"""
-
-	"""
-	無処理の画像では12ptが精度良し
-	「・」は除外する? => 正規の文字列ではどうするか
-	"""
-
-	#gray_img = img_closing(gray_img, 1)
+	#gray_img = img_closing(gray_img, 2)
 	#gray_img = img_opening(gray_img, 1)
 
 	#gray_img = gray_img.filter(ImageFilter.GaussianBlur(0.5))
