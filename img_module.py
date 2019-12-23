@@ -88,22 +88,18 @@ def ticket_threshold(target):
 			im_cut = rem_noise_img.crop((x_st, y_st, x_en, y_en))
 			img_name = "./area/" + str(cnt) + ".jpg"
 			im_cut.save(img_name)
-			#print(cnt, ":" ,iter.content)
+			print(cnt, ":" ,iter.content)
 
 			cnt = cnt + 1
-			#area_point_arr.append([x_st, y_st, x_en, y_en])
+			area_point_arr.append([x_st, y_st, x_en, y_en])
+
 
 	#if len(area_point_arr) < 1:
 	if len(pos) < 1:
 		print("抽出できません")
 		exit()
 
-	"""
-	print("どの画像を表示するか?")
-	i = input()
-	return area_point_arr[int(i)]
-	"""
-	return len(pos)
+	return area_point_arr
 
 #取得した領域に対してOCRする処理
 def area_img_to_ocr(target, position):

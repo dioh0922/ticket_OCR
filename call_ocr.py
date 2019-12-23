@@ -129,17 +129,37 @@ if 3 <= len(args):
 		print("error debug option")
 	exit()
 
-#本処理(ブラウザ上でも同じような手順を行う)
-"""
-領域抽出 => デフォルトのモデル
-内容抽出 => 強化したモデル
-で分けて使う
-"""
-img = Image.open(args[1])
 
+result_list = glob.glob("./get_result/" + "*")
+for i in result_list:
+	os.remove(i)
+
+result_list = glob.glob("./area/" + "*")
+for i in result_list:
+	os.remove(i)
+
+img = Image.open(args[1])
 
 #指定した画像からタイトル領域を取得する
 #各領域の画像を./areaに書き出す(以降はこれを使って識別する)
 detected_area = img_module.ticket_threshold(args[1])
 
-print(detected_area)
+print("どの画像を表示するか?")
+i = input()
+
+target_img = "./area/" + i + ".jpg"
+
+gray_img = img_module.img_proc_filter(target_img)
+
+detect_list = ocr_module.test_trained_ocr(gray_img)
+
+for txt in detect_list:
+	txt_module.print_detect_word(txt.content)
+
+img_module.get_img_result_word(detect_list)
+
+img_list = glob.glob("./get_result/" + "*")
+
+for i in img_list:
+	img = Image.open(i)
+	img.show()
